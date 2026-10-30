@@ -9,6 +9,9 @@ from pathlib import Path
 import shutil
 import subprocess
 import sys
+from console import configure
+
+configure()
 
 VERSION='0.1.0'
 

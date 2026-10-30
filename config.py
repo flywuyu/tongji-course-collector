@@ -3,6 +3,9 @@ import json
 import os
 from pathlib import Path
 import shutil
+from console import configure
+
+configure()
 
 PROJ=str(Path(__file__).resolve().parent)
 LOCAL_CONFIG=Path(PROJ)/'config.local.json'

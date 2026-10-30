@@ -128,7 +128,7 @@ def snapshot(deep=False):
         build_marker=read_json(root/'ppt_build.json')
         rows.append({'sub_id': str(it['sub_id']), 'course': it['title'], 'date': it['date'],
                      'week': naming.week_of(it['date']), 'slot': naming.slot_of(it.get('sub_title', '')),
-                     'dir': str(root.relative_to(Path(C.DATA))), 'subtitle': subtitle,
+                     'dir': str(root.relative_to(Path(C.DATA).resolve())), 'subtitle': subtitle,
                      'ppt_route': route, 'ppt': ('已提取' if a['pictures_ready'] else
                                                 '部分，待续跑' if a['raw'] else '待提取'),
                      'raw': a['raw'], 'unique': a['unique'],

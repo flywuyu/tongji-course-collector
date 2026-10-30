@@ -20,7 +20,7 @@ ROOT=Path(__file__).resolve().parents[1]
 class DistributionTests(unittest.TestCase):
     def test_init_is_portable_and_does_not_overwrite_existing_configuration(self):
         with tempfile.TemporaryDirectory() as tmp:
-            root=Path(tmp)
+            root=Path(tmp).resolve()
             with mock.patch.object(C,'PROJ',str(root)),mock.patch.object(C,'LOCAL_CONFIG',root/'config.local.json'), \
                  mock.patch.object(C,'CAT',str(root/'catalog.json')):
                 shutil.copy2(ROOT/'pipeline_settings.example.json',root/'pipeline_settings.example.json')

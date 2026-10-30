@@ -32,7 +32,8 @@ class NightRecoveryTests(unittest.TestCase):
         self.addCleanup(self.rules.stop);self.addCleanup(self.term.stop)
 
     def test_remote_probe_timeout_recovers_with_bounded_socket_reads(self):
-        result=types.SimpleNamespace(stderr='Duration: 01:10:00.00\nStream #0:0: Audio: aac',returncode=1)
+        result=types.SimpleNamespace(stderr='Duration: 01:10:00.00\nStream #0:0: Audio: aac',
+            stdout=json.dumps({'format':{'duration':'4200'},'streams':[{'codec_type':'audio'}]}),returncode=0)
         timeout=subprocess.TimeoutExpired(['ffmpeg'],25)
         with mock.patch.object(T.subprocess,'run',side_effect=[timeout,result]) as run, \
              mock.patch.object(T.time,'sleep'):
