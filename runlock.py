@@ -12,6 +12,7 @@
 锁文件：项目根目录 .collector.lock（内容：pid + 启动时间）
 崩溃留下的锁：acquire() 会检查 PID 是否还活着，死了就直接接管。
 """
+from hidden_process import run as run_hidden
 import os, sys, json, time, subprocess, atexit
 
 import config as C
@@ -29,7 +30,7 @@ def _pid_alive(pid):
     except (ImportError, ValueError):
         pass
     try:
-        out = subprocess.run(['tasklist', '/FI', 'PID eq %s' % pid],
+        out = run_hidden(['tasklist', '/FI', 'PID eq %s' % pid],
                              capture_output=True, text=True, errors='replace', timeout=10).stdout
         return str(pid) in (out or '')
     except Exception:

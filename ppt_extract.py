@@ -5,6 +5,7 @@ This is deliberately separate from ppt_download.py. It streams the public MP4
 through ffmpeg without storing the video, then writes the same slides/index
 shape consumed by ppt_build.py. One lecture at a time, after Whisper finishes.
 """
+from hidden_process import run as run_hidden
 import argparse
 import csv
 import json
@@ -73,7 +74,7 @@ def main():
             '-fps_mode', 'vfr', '-q:v', '3', '-start_number', '0', pattern]
     print('从视频按 %d 秒抽帧：%s %s' % (a.step, it['date'], it['title']), flush=True)
     started = time.time()
-    proc = subprocess.run(cmd, capture_output=True, text=True,
+    proc = run_hidden(cmd, capture_output=True, text=True,
                           encoding='utf-8', errors='strict')
     if proc.returncode:
         print('ffmpeg 失败：%s' % (proc.stderr or '')[-400:])

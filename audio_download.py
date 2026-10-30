@@ -1,10 +1,11 @@
 """Atomic audio download and measured duration validation; no GPU imports."""
+from hidden_process import run as run_hidden
 import os,re,subprocess,time
 import config as C
 FF=C.FF
 
 def probe_duration(path):
-    r = subprocess.run([FF, '-hide_banner', '-i', path],
+    r = run_hidden([FF, '-hide_banner', '-i', path],
                        capture_output=True, text=True, encoding='utf-8', errors='replace')
     m = re.search(r'Duration:\s*(\d+):(\d+):(\d+\.?\d*)', r.stderr or '')
     if not m:
@@ -30,7 +31,7 @@ def download_audio(url, dst, expect_sec):
            '-t', str(int(float(expect_sec) + 60)), '-f', 'wav', tmp]
     t0 = time.time()
     try:
-        r = subprocess.run(cmd, capture_output=True, text=True, encoding='utf-8', errors='strict',
+        r = run_hidden(cmd, capture_output=True, text=True, encoding='utf-8', errors='strict',
                            timeout=max(600, int(expect_sec / 3)))
     except subprocess.TimeoutExpired:
         return False, '音频下载超时，保留临时文件，下次核验后续跑'

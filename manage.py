@@ -1,4 +1,6 @@
 """Friendly local setup and maintenance commands for Tongji Course Collector."""
+from hidden_process import run as run_hidden
+from hidden_process import call as call_hidden
 import argparse
 import datetime as dt
 import getpass
@@ -54,7 +56,7 @@ def doctor():
         except importlib.metadata.PackageNotFoundError:errors.append('缺少依赖 '+name)
     if not shutil.which(C.FF) and not Path(C.FF).is_file():errors.append('未找到FFmpeg，请加入PATH或设置TONGJI_FFMPEG')
     else:
-        result=subprocess.run([C.FF,'-version'],capture_output=True,encoding='utf-8',timeout=15)
+        result=run_hidden([C.FF,'-version'],capture_output=True,encoding='utf-8',timeout=15)
         if result.returncode:errors.append('FFmpeg无法运行')
     if not shutil.which('nvidia-smi'):errors.append('未找到NVIDIA驱动/nvidia-smi，GPU自动转写不可用')
     try:
@@ -115,7 +117,7 @@ def main(argv=None):
         command=['powershell','-NoProfile','-ExecutionPolicy','Bypass','-File',str(Path(C.PROJ)/script)]
         if args.command=='schedule':command+=['-PythonPath',sys.executable]
         if args.dry_run:command+=['-WhatIf']
-        return subprocess.call(command)
+        return call_hidden(command)
     import workflow
     modes={'login':'--login','report':'--report','run':'--run','resume':'--resume','stop':'--stop'}
     sys.argv=['workflow.py',modes[args.command]]

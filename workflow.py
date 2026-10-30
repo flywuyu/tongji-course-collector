@@ -1,4 +1,6 @@
 """Single scheduled entry: login -> discover -> audio -> PPT -> lecture -> report."""
+from hidden_process import run as run_hidden
+from hidden_process import call as call_hidden
 import argparse
 import atexit
 import ctypes
@@ -42,7 +44,7 @@ def kill_tree(process):
 
 def temperature():
     try:
-        r = subprocess.run(['nvidia-smi', '--query-gpu=temperature.gpu', '--format=csv,noheader,nounits'],
+        r = run_hidden(['nvidia-smi', '--query-gpu=temperature.gpu', '--format=csv,noheader,nounits'],
                            capture_output=True, encoding='utf-8', timeout=10,
                            creationflags=subprocess.CREATE_NO_WINDOW)
         return max(int(x.strip()) for x in r.stdout.splitlines() if x.strip())
@@ -52,7 +54,7 @@ def temperature():
 
 def gpu_free_gb():
     try:
-        result=subprocess.run(['nvidia-smi','--query-gpu=memory.free','--format=csv,noheader,nounits'],
+        result=run_hidden(['nvidia-smi','--query-gpu=memory.free','--format=csv,noheader,nounits'],
             capture_output=True,encoding='utf-8',timeout=10,creationflags=subprocess.CREATE_NO_WINDOW)
         values=[float(x.strip())*1024*1024/1e9 for x in result.stdout.splitlines() if x.strip()]
         return min(values) if result.returncode==0 and values else None
@@ -427,7 +429,7 @@ def notify_login():
 def notify_message(message):
     # Notify only when a user action is needed, never on every successful check.
     try:
-        subprocess.run([sys.executable, '-X', 'utf8', str(Path(C.PROJ)/'notify_user.py'), message],
+        run_hidden([sys.executable, '-X', 'utf8', str(Path(C.PROJ)/'notify_user.py'), message],
                         timeout=125, creationflags=subprocess.CREATE_NO_WINDOW)
     except (OSError, subprocess.TimeoutExpired) as exc:
         atomic_text(STATE/'notification_error.log', now().isoformat()+' '+redact(exc)+'\n')
@@ -469,7 +471,7 @@ def main():
     modes.add_argument('--report', action='store_true')
     args = parser.parse_args()
     if args.login:
-        return subprocess.call([sys.executable, '-X', 'utf8', str(Path(C.PROJ) / 'platform_session.py'), 'login'])
+        return call_hidden([sys.executable, '-X', 'utf8', str(Path(C.PROJ) / 'platform_session.py'), 'login'])
     if args.stop:
         stop()
         return 0

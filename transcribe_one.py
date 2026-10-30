@@ -1,4 +1,5 @@
 """One lecture per GPU process, measured silence, original video time preserved."""
+from hidden_process import run as run_hidden
 import argparse
 import gc
 import json
@@ -43,7 +44,7 @@ def _media_probe_once(source, remote):
     network = ['-rw_timeout', '10000000', '-user_agent', 'Mozilla/5.0'] if remote else []
     limits = ['-probesize', '1048576', '-analyzeduration', '5000000']
     if not Path(ffprobe).exists():
-        proc = subprocess.run([C.FF, '-hide_banner', *network, *limits, '-i', str(source)], capture_output=True,
+        proc = run_hidden([C.FF, '-hide_banner', *network, *limits, '-i', str(source)], capture_output=True,
                               encoding='utf-8', errors='strict', timeout=25 if remote else 30)
         text = proc.stderr
         match = re.search(r'Duration:\s*(\d+):(\d+):(\d+\.?\d*)', text)
@@ -55,7 +56,7 @@ def _media_probe_once(source, remote):
         return duration, streams
     cmd = [ffprobe, '-v', 'error', *network, *limits, '-show_entries', 'format=duration:stream=codec_type',
            '-of', 'json', str(source)]
-    proc = subprocess.run(cmd, capture_output=True, encoding='utf-8', errors='strict', timeout=25 if remote else 30)
+    proc = run_hidden(cmd, capture_output=True, encoding='utf-8', errors='strict', timeout=25 if remote else 30)
     if proc.returncode:
         raise RuntimeError('媒体探测失败（网络或地址过期），不能当成静音')
     data = json.loads(proc.stdout)
@@ -63,7 +64,7 @@ def _media_probe_once(source, remote):
 
 
 def analyze_audio(wav, duration, noise=-45):
-    proc = subprocess.run([C.FF, '-hide_banner', '-nostats', '-threads', '2', '-i', str(wav),
+    proc = run_hidden([C.FF, '-hide_banner', '-nostats', '-threads', '2', '-i', str(wav),
               '-af', 'silencedetect=noise=%sdB:d=30,volumedetect' % noise, '-f', 'null', os.devnull],
               capture_output=True, encoding='utf-8', errors='strict', timeout=240)
     if proc.returncode:
@@ -263,7 +264,7 @@ def transcribe(it):
                       (number + 1, len(ranges), fmt(start), fmt(end)), flush=True)
                 continue
             chunk = Path(temp) / 'chunk.wav'
-            subprocess.run([C.FF, '-y', '-v', 'error', '-threads', '2', '-ss', str(start),
+            run_hidden([C.FF, '-y', '-v', 'error', '-threads', '2', '-ss', str(start),
                 '-i', str(wav), '-t', str(end - start), '-ac', '1', '-ar', '16000', str(chunk)],
                 check=True, timeout=120, capture_output=True)
             beam = progress.beam_for(number, policy['beam_size'])
