@@ -1,0 +1,30 @@
+{
+  "timezone": "Asia/Shanghai",
+  "weekday": 4,
+  "start": "00:00",
+  "end": "08:00",
+  "extra_windows": [
+    {
+      "weekday": 5,
+      "start": "00:00",
+      "end": "08:00"
+    }
+  ],
+  "preflight_weekday": 3,
+  "preflight_time": "21:00",
+  "gpu_stop_c": 85,
+  "gpu_resume_c": 72,
+  "min_available_ram_gb": 5,
+  "max_worker_ram_gb": 16,
+  "min_free_disk_gb": 10,
+  "ocr_workers": 4,
+  "require_ac_power": true,
+  "audio_prefetch_timeout_sec": 900,
+  "asr_beam_size": 1,
+  "asr_chunk_timeout_factor": 8,
+  "asr_chunk_timeout_min_sec": 60,
+  "asr_chunk_timeout_max_sec": 1800,
+  "window_retry_sec": 180,
+  "asr_min_gpu_free_gb": 4.5,
+  "course_rules": {}
+}

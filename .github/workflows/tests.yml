@@ -1,0 +1,30 @@
+name: Windows offline tests
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  tests:
+    runs-on: windows-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+          cache: pip
+      - name: Install FFmpeg and CPU-only test dependencies
+        shell: pwsh
+        run: |
+          choco install ffmpeg --yes --no-progress
+          python -m pip install --upgrade pip
+          python -m pip install torch==2.11.0 --index-url https://download.pytorch.org/whl/cpu
+          python -m pip install -r requirements-tested.txt
+      - name: Verify public tree
+        run: python scripts/check_public_tree.py
+      - name: Compile modules
+        run: python -m compileall -q .
+      - name: Run synthetic regressions without campus access or GPU
+        run: python -m unittest discover -s tests -v

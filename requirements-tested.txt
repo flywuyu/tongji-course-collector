@@ -1,0 +1,12 @@
+# Reproducible reference versions from the original Windows validation environment.
+# Install a compatible CUDA-enabled torch build first, following the official selector.
+numpy==2.3.5
+Pillow==12.2.0
+psutil==7.2.2
+playwright==1.59.0
+openai-whisper==20250625
+torch==2.11.0
+rapidocr-onnxruntime==1.2.3
+onnxruntime==1.26.0
+reportlab==4.4.9
+pypdf==6.10.2

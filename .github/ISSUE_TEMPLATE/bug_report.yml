@@ -1,0 +1,24 @@
+name: 问题报告
+description: 报告安装、课程发现或讲义生成问题（请先脱敏）
+body:
+  - type: markdown
+    attributes:
+      value: 请勿提交密码、Cookie、Token、课程直链、真实字幕或PPT截图。
+  - type: textarea
+    id: environment
+    attributes:
+      label: 环境与版本
+      description: Windows、Python、显卡与依赖版本；不要贴账号。
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: 复现步骤、期望与实际结果
+    validations:
+      required: true
+  - type: textarea
+    id: log
+    attributes:
+      label: 脱敏的错误类型与日志片段
+      render: text
